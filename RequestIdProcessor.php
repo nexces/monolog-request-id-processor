@@ -14,7 +14,15 @@ namespace evaisse\MonologRequestIdProcessor;
 class RequestIdProcessor
 {
 
+    /**
+     * @var string UUID v4 form of request id
+     */
     protected $requestId;
+
+    /**
+     * @var
+     */
+    protected $forwardedRequestId;
 
     /**
      * @param array|\ArrayAccess|null $serverData
@@ -29,10 +37,48 @@ class RequestIdProcessor
             $candidate = $_SERVER['HTTP_X_REQUEST_ID'];
         } else if (!empty($_SERVER['UNIQUE_ID'])) {
             $candidate = $_SERVER['UNIQUE_ID'];
+        } else {
+            $candidate = null;
         }
 
-        $this->requestId = (string)$candidate;
-        $this->requestId = trim($this->requestId);
+        $this->requestId = $this->filter($candidate);
+
+        if (!empty($_SERVER['HTTP_X_FORWARDED_REQUEST_ID'])) {
+            $this->forwardedRequestId = $this->filter($_SERVER['HTTP_X_FORWARDED_REQUEST_ID']);
+        }
+
+    }
+
+
+    /**
+     * validate of return default uuidv4
+     * @param string $uuidv4 validate
+     * @return string
+     */
+    public function filter($uuidv4)
+    {
+        $uuidv4 = (string);
+        $uuidv4 = trim($uuidv4);
+
+        if (preg_match('/[a-f0-9]{8}\-[a-f0-9]{4}\-4[a-f0-9]{3}\-(8|9|a|b)[a-f0-9]{3}\-[a-f0-9]{12}/', $uuidv4)) {
+            return $uuidv4;
+        }
+
+        return sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+            // 32 bits for "time_low"
+            mt_rand(0, 0xffff), mt_rand(0, 0xffff),
+            // 16 bits for "time_mid"
+            mt_rand(0, 0xffff),
+            // 16 bits for "time_hi_and_version",
+            // four most significant bits holds version number 4
+            mt_rand(0, 0x0fff) | 0x4000,
+            // 16 bits, 8 bits for "clk_seq_hi_res",
+            // 8 bits for "clk_seq_low",
+            // two most significant bits holds zero and one for variant DCE1.1
+            mt_rand(0, 0x3fff) | 0x8000,
+            // 48 bits for "node"
+            mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)
+        );
     }
 
 
@@ -45,6 +91,22 @@ class RequestIdProcessor
         $record['extra']['request_id'] = $this->requestId;
 
         return $record;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRequestId()
+    {
+        return $this->requestId;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getForwardedRequestId()
+    {
+        return $this->forwardedRequestId;
     }
 
 }
