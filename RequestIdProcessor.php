@@ -20,11 +20,6 @@ class RequestIdProcessor
     protected $requestId;
 
     /**
-     * @var
-     */
-    protected $forwardedRequestId;
-
-    /**
      * @param array|\ArrayAccess|null $serverData
      */
     function __construct($serverData = null)
@@ -33,20 +28,15 @@ class RequestIdProcessor
             $serverData = &$_SERVER;
         }
 
-        if (!empty($_SERVER['HTTP_X_REQUEST_ID'])) {
-            $candidate = $_SERVER['HTTP_X_REQUEST_ID'];
-        } else if (!empty($_SERVER['UNIQUE_ID'])) {
-            $candidate = $_SERVER['UNIQUE_ID'];
+        if (!empty($serverData['HTTP_X_REQUEST_ID'])) {
+            $candidate = $serverData['HTTP_X_REQUEST_ID'];
+        } else if (!empty($serverData['UNIQUE_ID'])) {
+            $candidate = $serverData['UNIQUE_ID'];
         } else {
             $candidate = null;
         }
 
         $this->requestId = $this->filter($candidate);
-
-        if (!empty($_SERVER['HTTP_X_FORWARDED_REQUEST_ID'])) {
-            $this->forwardedRequestId = $this->filter($_SERVER['HTTP_X_FORWARDED_REQUEST_ID']);
-        }
-
     }
 
 
@@ -101,12 +91,5 @@ class RequestIdProcessor
         return $this->requestId;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getForwardedRequestId()
-    {
-        return $this->forwardedRequestId;
-    }
 
 }
