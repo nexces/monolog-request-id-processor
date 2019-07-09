@@ -1,9 +1,9 @@
 {
-    "name": "evaisse/monolog-request-id-processor",
+    "name": "nexces/monolog-request-id-processor",
     "description": "A Monolog processor to add X-Request-Id or UNIQUE_ID env to monolog stack if present, provide a default one otherwise. Optionally, add a forwarded request-id list.",
     "keywords": ["monolog", "x-request-id", "processor", "requestid", "unique", "id"],
     "type": "library",
-    "homepage": "https://github.com/evaisse/monolog-request-id-processor",
+    "homepage": "https://github.com/nexces/monolog-request-id-processor",
     "license": "MIT",
     "authors": [
         {
@@ -22,8 +22,8 @@
     "minimum-stability": "stable",
     "autoload": {
         "psr-0": {
-            "evaisse\\MonologRequestIdProcessor": ""
+            "nexces\\MonologRequestIdProcessor": ""
         }
     },
-    "target-dir": "evaisse/MonologRequestIdProcessor"
+    "target-dir": "nexces/MonologRequestIdProcessor"
 }
