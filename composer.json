@@ -9,6 +9,11 @@
         {
             "name": "Emmanuel VAISSE",
             "email": "evaisse@gmail.com"
+        },
+        {
+            "name": "Adrian 'Nexces' Piotrowicz",
+            "email": "nexces@nxstudio.pl",
+            "role": "contributor"
         }
     ],
     "require": {
